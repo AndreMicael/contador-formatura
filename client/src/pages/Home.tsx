@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { APP_TITLE } from "@/const";
 
 // Calendário acadêmico com períodos de aulas (dias úteis)
 const academicCalendar = [
@@ -44,6 +43,7 @@ function calculateBusinessDaysRemaining(): number {
 }
 
 export default function Home() {
+  const [isBusinessDays, setIsBusinessDays] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState<number>(0);
   const [businessDaysRemaining, setBusinessDaysRemaining] = useState<number>(0);
   const [timeRemaining, setTimeRemaining] = useState<{
@@ -132,119 +132,104 @@ export default function Home() {
     return () => clearInterval(interval);
   }, []);
 
+  const currentTime = isBusinessDays ? businessTimeRemaining : timeRemaining;
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
-      <main className="text-center">
-        <h1 className="text-5xl md:text-6xl font-bold text-gray-800 mb-4">
-          {APP_TITLE}
-        </h1>
-        <p className="text-xl md:text-2xl text-gray-600 mb-12">
-          12 de dezembro de 2026
-        </p>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 p-4 relative overflow-hidden">
+      {/* Animated background effects */}
+      <div className="absolute inset-0 overflow-hidden">
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/20 rounded-full blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-500/20 rounded-full blur-3xl animate-pulse delay-1000"></div>
+      </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Tempo Total</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            {/* Days */}
-            <div className="flex flex-col items-center">
-              <div className="bg-blue-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {timeRemaining.days}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Dias</p>
-            </div>
-
-            {/* Hours */}
-            <div className="flex flex-col items-center">
-              <div className="bg-indigo-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(timeRemaining.hours).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Horas</p>
-            </div>
-
-            {/* Minutes */}
-            <div className="flex flex-col items-center">
-              <div className="bg-purple-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(timeRemaining.minutes).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Minutos</p>
-            </div>
-
-            {/* Seconds */}
-            <div className="flex flex-col items-center">
-              <div className="bg-pink-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(timeRemaining.seconds).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Segundos</p>
-            </div>
-          </div>
-
-          <div className="border-t pt-8">
-            <p className="text-2xl md:text-3xl font-bold text-gray-800">
-              {daysRemaining} dias
-            </p>
-            <p className="text-gray-600 mt-2">até sua formatura! 🎓</p>
-          </div>
+      <main className="text-center relative z-10 w-full max-w-4xl">
+        {/* Switch Toggle */}
+        <div className="flex items-center justify-center gap-4 mb-12">
+          <span className={`text-sm font-medium transition-colors ${!isBusinessDays ? 'text-cyan-400' : 'text-gray-500'}`}>
+            Tempo Total
+          </span>
+          <button
+            onClick={() => setIsBusinessDays(!isBusinessDays)}
+            className={`relative inline-flex h-8 w-16 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:ring-offset-2 focus:ring-offset-slate-900 ${
+              isBusinessDays ? 'bg-gradient-to-r from-purple-500 to-pink-500' : 'bg-gradient-to-r from-cyan-500 to-blue-500'
+            }`}
+          >
+            <span
+              className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform shadow-lg ${
+                isBusinessDays ? 'translate-x-9' : 'translate-x-1'
+              }`}
+            />
+          </button>
+          <span className={`text-sm font-medium transition-colors ${isBusinessDays ? 'text-purple-400' : 'text-gray-500'}`}>
+            Dias Úteis
+          </span>
         </div>
 
-        <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 max-w-2xl mt-8">
-          <h2 className="text-2xl font-bold text-gray-800 mb-6">Dias Úteis</h2>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
-            {/* Business Days */}
-            <div className="flex flex-col items-center">
-              <div className="bg-green-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {businessTimeRemaining.days}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Dias</p>
-            </div>
+        {/* Circular Counter */}
+        <div className="relative flex items-center justify-center">
+          <div className="relative w-80 h-80 md:w-96 md:h-96">
+            {/* Outer glow ring */}
+            <div className={`absolute inset-0 rounded-full ${
+              isBusinessDays 
+                ? 'bg-gradient-to-r from-purple-500/30 via-pink-500/30 to-purple-500/30' 
+                : 'bg-gradient-to-r from-cyan-500/30 via-blue-500/30 to-cyan-500/30'
+            } blur-xl animate-pulse`}></div>
+            
+            {/* Main circle */}
+            <div className="relative w-full h-full rounded-full bg-gradient-to-br from-slate-800/90 via-slate-900/90 to-slate-800/90 backdrop-blur-xl border-2 border-slate-700/50 shadow-2xl flex flex-col items-center justify-center p-8">
+              {/* Time display */}
+              <div className="flex flex-col items-center justify-center space-y-2">
+                {/* Days - Large */}
+                <div className="flex flex-col items-center">
+                  <span className={`text-7xl md:text-8xl font-bold font-mono ${
+                    isBusinessDays 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400'
+                  } drop-shadow-lg`}>
+                    {currentTime.days}
+                  </span>
+                </div>
 
-            {/* Business Hours */}
-            <div className="flex flex-col items-center">
-              <div className="bg-emerald-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(businessTimeRemaining.hours).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Horas</p>
-            </div>
+                {/* Hours, Minutes, Seconds - Smaller */}
+                <div className="flex items-center gap-3 md:gap-4 mt-6">
+                  <span className={`text-4xl md:text-5xl font-bold font-mono ${
+                    isBusinessDays 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400'
+                  }`}>
+                    {String(currentTime.hours).padStart(2, "0")}
+                  </span>
 
-            {/* Business Minutes */}
-            <div className="flex flex-col items-center">
-              <div className="bg-teal-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(businessTimeRemaining.minutes).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Minutos</p>
-            </div>
+                  <span className={`text-3xl md:text-4xl font-bold ${
+                    isBusinessDays ? 'text-purple-400/50' : 'text-cyan-400/50'
+                  }`}>
+                    :
+                  </span>
 
-            {/* Business Seconds */}
-            <div className="flex flex-col items-center">
-              <div className="bg-cyan-500 text-white rounded-lg p-6 md:p-8 w-full">
-                <span className="text-4xl md:text-5xl font-bold">
-                  {String(businessTimeRemaining.seconds).padStart(2, "0")}
-                </span>
-              </div>
-              <p className="text-gray-600 mt-3 font-semibold">Segundos</p>
-            </div>
-          </div>
+                  <span className={`text-4xl md:text-5xl font-bold font-mono ${
+                    isBusinessDays 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400'
+                  }`}>
+                    {String(currentTime.minutes).padStart(2, "0")}
+                  </span>
 
-          <div className="border-t pt-8">
-            <p className="text-2xl md:text-3xl font-bold text-gray-800">
-              {businessDaysRemaining} dias úteis
-            </p>
-            <p className="text-gray-600 mt-2">
-              (segunda a sexta, conforme calendário acadêmico)
-            </p>
+                  <span className={`text-3xl md:text-4xl font-bold ${
+                    isBusinessDays ? 'text-purple-400/50' : 'text-cyan-400/50'
+                  }`}>
+                    :
+                  </span>
+
+                  <span className={`text-4xl md:text-5xl font-bold font-mono ${
+                    isBusinessDays 
+                      ? 'text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-400' 
+                      : 'text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-blue-400'
+                  }`}>
+                    {String(currentTime.seconds).padStart(2, "0")}
+                  </span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </main>
