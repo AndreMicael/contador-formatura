@@ -43,7 +43,7 @@ function calculateBusinessDaysRemaining(): number {
 }
 
 export default function Home() {
-  const [isBusinessDays, setIsBusinessDays] = useState(false);
+  const [isBusinessDays, setIsBusinessDays] = useState(true);
   const [daysRemaining, setDaysRemaining] = useState<number>(0);
   const [businessDaysRemaining, setBusinessDaysRemaining] = useState<number>(0);
   const [timeRemaining, setTimeRemaining] = useState<{
