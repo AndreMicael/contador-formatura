@@ -22,10 +22,13 @@ export default defineConfig({
     },
   },
   envDir: __dirname,
-  root: path.resolve(__dirname, "client"),
+  root: __dirname,
   build: {
     outDir: path.resolve(__dirname, "dist/public"),
     emptyOutDir: true,
+    rollupOptions: {
+      input: path.resolve(__dirname, "client", "index.html"),
+    },
   },
   server: {
     port: 3000,
